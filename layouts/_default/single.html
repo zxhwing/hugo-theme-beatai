@@ -1,0 +1,14 @@
+{{ define "main" }}
+  <article class="article">
+    <header class="article-header">
+      <p class="article-kicker">{{ .Section | default "Page" }}</p>
+      <h1>{{ .Title }}</h1>
+      {{ with .Params.description }}
+        <p class="article-description">{{ . }}</p>
+      {{ end }}
+    </header>
+    <div class="article-body prose">
+      {{ .Content }}
+    </div>
+  </article>
+{{ end }}

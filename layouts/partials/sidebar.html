@@ -1,0 +1,17 @@
+{{ $docs := site.GetPage "section" "docs" }}
+<aside class="sidebar" data-sidebar>
+  <div class="sidebar-inner">
+    <a class="sidebar-title" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
+    {{ with site.Params.tagline }}
+      <p class="sidebar-tagline">{{ . }}</p>
+    {{ end }}
+    <nav class="sidebar-nav" aria-label="Sidebar navigation">
+      <a class="sidebar-link{{ if .IsHome }} is-active{{ end }}" href="{{ site.Home.RelPermalink }}">首页</a>
+      {{ with $docs }}
+        {{ range .Pages.ByWeight }}
+          <a class="sidebar-link{{ if eq $.RelPermalink .RelPermalink }} is-active{{ end }}" href="{{ .RelPermalink }}">{{ .Title }}</a>
+        {{ end }}
+      {{ end }}
+    </nav>
+  </div>
+</aside>

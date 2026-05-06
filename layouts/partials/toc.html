@@ -1,0 +1,9 @@
+{{ $showToc := and .IsPage (gt (len .TableOfContents) 0) }}
+<aside class="page-toc{{ if not $showToc }} is-empty{{ end }}">
+  {{ if $showToc }}
+    <div class="page-toc-inner">
+      <p>On This Page</p>
+      {{ .TableOfContents }}
+    </div>
+  {{ end }}
+</aside>

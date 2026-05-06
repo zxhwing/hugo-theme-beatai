@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="{{ site.LanguageCode | default `zh-cn` }}">
+  <head>
+    {{ partial "head.html" . }}
+  </head>
+  <body>
+    <div class="site-shell">
+      {{ partial "sidebar.html" . }}
+      <div class="page-shell">
+        {{ partial "header.html" . }}
+        <div class="content-shell">
+          <main class="main-content">
+            {{ block "main" . }}{{ end }}
+          </main>
+          {{ partial "toc.html" . }}
+        </div>
+      </div>
+    </div>
+    {{ $js := resources.Get "js/theme.js" | minify | fingerprint }}
+    <script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}"></script>
+  </body>
+</html>

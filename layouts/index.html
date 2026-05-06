@@ -1,0 +1,23 @@
+{{ define "main" }}
+  <section class="hero">
+    <p class="hero-eyebrow">{{ site.Params.heroEyebrow | default "BeatAI-inspired Hugo Theme" }}</p>
+    <h1>{{ site.Title }}</h1>
+    <p class="hero-copy">{{ site.Params.heroCopy | default "为文档、教程和知识库设计的 Hugo 主题，保留清晰阅读体验和轻量工程感。" }}</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="{{ site.Params.primaryAction | default `/docs/` }}">开始阅读</a>
+      {{ with site.Params.secondaryAction }}
+        <a class="button button-secondary" href="{{ . }}">查看示例</a>
+      {{ end }}
+    </div>
+  </section>
+
+  <section class="card-grid">
+    {{ range first 6 (where site.RegularPages "Section" "docs") }}
+      <a class="doc-card" href="{{ .RelPermalink }}">
+        <span class="doc-card-label">Docs</span>
+        <strong>{{ .Title }}</strong>
+        <p>{{ .Params.description | default (.Summary | plainify | truncate 120) }}</p>
+      </a>
+    {{ end }}
+  </section>
+{{ end }}

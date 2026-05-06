@@ -1,0 +1,10 @@
+<header class="topbar">
+  <button class="nav-toggle" type="button" data-nav-toggle aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="{{ site.Home.RelPermalink }}">
+    <span class="brand-mark"></span>
+    <span>{{ site.Title }}</span>
+  </a>
+  {{ with site.Params.github }}
+    <a class="topbar-link" href="{{ . }}">GitHub</a>
+  {{ end }}
+</header>

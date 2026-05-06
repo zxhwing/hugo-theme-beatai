@@ -1,0 +1,24 @@
+{{ define "main" }}
+  <section class="article">
+    <header class="article-header">
+      <p class="article-kicker">{{ .Section | default "Overview" }}</p>
+      <h1>{{ .Title }}</h1>
+      {{ with .Content }}
+        <div class="article-description prose">{{ . }}</div>
+      {{ end }}
+    </header>
+    <div class="card-grid">
+      {{ range .Pages }}
+        <a class="doc-card" href="{{ .RelPermalink }}">
+          <span class="doc-card-label">{{ .Section | default "Page" }}</span>
+          <strong>{{ .Title }}</strong>
+          {{ with .Params.description }}
+            <p>{{ . }}</p>
+          {{ else }}
+            <p>{{ .Summary | plainify | truncate 120 }}</p>
+          {{ end }}
+        </a>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

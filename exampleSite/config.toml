@@ -1,0 +1,12 @@
+baseURL = "https://example.org/"
+languageCode = "zh-cn"
+title = "My Beat Notes"
+theme = "hugo-theme-beatai"
+
+[params]
+  description = "一个受 BeatAI 启发的 Hugo 文档站"
+  tagline = "清晰、克制、适合长时间阅读"
+  heroEyebrow = "Documentation Theme"
+  heroCopy = "把 BeatAI 的阅读感、配色和信息结构迁移成一个可复用的 Hugo 主题。"
+  primaryAction = "/docs/getting-started/"
+  github = "https://github.com/yourname/yourrepo"
