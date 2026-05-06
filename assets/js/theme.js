@@ -1,12 +1,37 @@
 document.addEventListener("DOMContentLoaded", function () {
   var toggle = document.querySelector("[data-nav-toggle]");
   var sidebar = document.querySelector("[data-sidebar]");
+  var themeToggle = document.querySelector("[data-theme-toggle]");
   var tocLinks = document.querySelectorAll(".page-toc a");
   var articleImages = document.querySelectorAll(".article-body img");
+  var sidebarLinks = document.querySelectorAll(".sidebar a");
 
   if (toggle && sidebar) {
     toggle.addEventListener("click", function () {
       document.body.classList.toggle("nav-open");
+    });
+  }
+
+  if (sidebarLinks.length) {
+    sidebarLinks.forEach(function (link) {
+      link.addEventListener("click", function () {
+        document.body.classList.remove("nav-open");
+      });
+    });
+  }
+
+  if (themeToggle) {
+    var root = document.documentElement;
+    var applyTheme = function (theme) {
+      root.setAttribute("data-theme", theme);
+      themeToggle.textContent = theme === "dark" ? "Light" : "Dark";
+    };
+    var currentTheme = root.getAttribute("data-theme") || "light";
+    applyTheme(currentTheme);
+    themeToggle.addEventListener("click", function () {
+      var nextTheme = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+      localStorage.setItem("beatai-theme", nextTheme);
+      applyTheme(nextTheme);
     });
   }
 
@@ -52,6 +77,13 @@ document.addEventListener("DOMContentLoaded", function () {
     lightbox.addEventListener("click", function () {
       lightbox.hidden = true;
       lightboxImage.removeAttribute("src");
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && !lightbox.hidden) {
+        lightbox.hidden = true;
+        lightboxImage.removeAttribute("src");
+      }
     });
   }
 });

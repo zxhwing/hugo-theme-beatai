@@ -8,9 +8,7 @@
     <nav class="sidebar-nav" aria-label="Sidebar navigation">
       <a class="sidebar-link{{ if .IsHome }} is-active{{ end }}" href="{{ site.Home.RelPermalink }}">首页</a>
       {{ with $docs }}
-        {{ range .Pages.ByWeight }}
-          <a class="sidebar-link{{ if eq $.RelPermalink .RelPermalink }} is-active{{ end }}" href="{{ .RelPermalink }}">{{ .Title }}</a>
-        {{ end }}
+        {{ partial "sidebar-tree.html" (dict "page" $.Page "node" . "depth" 0) }}
       {{ end }}
     </nav>
   </div>

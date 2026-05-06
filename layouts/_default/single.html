@@ -6,9 +6,21 @@
       {{ with .Params.description }}
         <p class="article-description">{{ . }}</p>
       {{ end }}
+      <div class="article-meta">
+        {{ with .Date }}
+          <span>{{ .Format "2006-01-02" }}</span>
+        {{ end }}
+        {{ with .ReadingTime }}
+          <span>{{ . }} min read</span>
+        {{ end }}
+        {{ with .Params.tags }}
+          <span>{{ delimit . ", " }}</span>
+        {{ end }}
+      </div>
     </header>
     <div class="article-body prose">
       {{ .Content }}
     </div>
+    {{ partial "doc-nav.html" . }}
   </article>
 {{ end }}

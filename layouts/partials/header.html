@@ -4,7 +4,10 @@
     <span class="brand-mark"></span>
     <span>{{ site.Title }}</span>
   </a>
-  {{ with site.Params.github }}
-    <a class="topbar-link" href="{{ . }}">GitHub</a>
-  {{ end }}
+  <div class="topbar-actions">
+    <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">Theme</button>
+    {{ with site.Params.github }}
+      <a class="topbar-link" href="{{ . }}">GitHub</a>
+    {{ end }}
+  </div>
 </header>

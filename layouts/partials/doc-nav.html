@@ -1,0 +1,38 @@
+{{ $docs := site.GetPage "section" "docs" }}
+{{ with $docs }}
+  {{ $pages := .RegularPagesRecursive.ByWeight }}
+  {{ $current := $.RelPermalink }}
+  {{ $scratch := newScratch }}
+  {{ $scratch.Set "prev" nil }}
+  {{ $scratch.Set "next" nil }}
+  {{ $scratch.Set "seen" false }}
+  {{ range $index, $item := $pages }}
+    {{ if and ($scratch.Get "seen") (not ($scratch.Get "next")) }}
+      {{ $scratch.Set "next" $item }}
+    {{ end }}
+    {{ if eq $item.RelPermalink $current }}
+      {{ $scratch.Set "seen" true }}
+      {{ if gt $index 0 }}
+        {{ $scratch.Set "prev" (index $pages (sub $index 1)) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ $prev := $scratch.Get "prev" }}
+  {{ $next := $scratch.Get "next" }}
+  {{ if or $prev $next }}
+    <nav class="doc-nav" aria-label="Page navigation">
+      {{ with $prev }}
+        <a class="doc-nav-link" href="{{ .RelPermalink }}">
+          <span>Previous</span>
+          <strong>{{ .Title }}</strong>
+        </a>
+      {{ end }}
+      {{ with $next }}
+        <a class="doc-nav-link align-right" href="{{ .RelPermalink }}">
+          <span>Next</span>
+          <strong>{{ .Title }}</strong>
+        </a>
+      {{ end }}
+    </nav>
+  {{ end }}
+{{ end }}

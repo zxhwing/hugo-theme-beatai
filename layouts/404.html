@@ -1,0 +1,11 @@
+{{ define "main" }}
+  <section class="hero">
+    <p class="hero-eyebrow">404</p>
+    <h1>Page not found</h1>
+    <p class="hero-copy">这个页面不存在，或者已经被移动了。你可以返回首页，或者继续浏览文档目录。</p>
+    <div class="hero-actions">
+      <a class="button button-primary" href="{{ site.Home.RelPermalink }}">返回首页</a>
+      <a class="button button-secondary" href="{{ `/docs/` | relURL }}">浏览文档</a>
+    </div>
+  </section>
+{{ end }}

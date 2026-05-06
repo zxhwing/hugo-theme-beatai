@@ -1,0 +1,18 @@
+{{ define "main" }}
+  <section class="article">
+    <header class="article-header">
+      <p class="article-kicker">Browse</p>
+      <h1>{{ .Title }}</h1>
+      <p class="article-description">按主题浏览站点内容。</p>
+    </header>
+    <div class="card-grid">
+      {{ range .Data.Terms.Alphabetical }}
+        <a class="doc-card" href="{{ .Page.RelPermalink }}">
+          <span class="doc-card-label">{{ $.Data.Plural }}</span>
+          <strong>{{ .Page.Title }}</strong>
+          <p>{{ .Count }} pages</p>
+        </a>
+      {{ end }}
+    </div>
+  </section>
+{{ end }}

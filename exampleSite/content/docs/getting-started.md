@@ -2,6 +2,8 @@
 title = "Getting Started"
 weight = 1
 description = "快速了解这个主题的结构和设计思路。"
+tags = ["intro", "theme"]
+categories = ["basics"]
 +++
 
 ## 主题目标

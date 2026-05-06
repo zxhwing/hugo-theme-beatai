@@ -1,0 +1,20 @@
+{{ $page := .page }}
+{{ $node := .node }}
+{{ $depth := .depth }}
+{{ $children := $node.Pages.ByWeight }}
+{{ if gt (len $children) 0 }}
+  <div class="sidebar-group depth-{{ $depth }}">
+    {{ range $children }}
+      {{ $isPage := .IsPage }}
+      {{ $isActive := or (eq $page.RelPermalink .RelPermalink) (and .IsSection (hasPrefix $page.RelPermalink .RelPermalink)) }}
+      {{ if $isPage }}
+        <a class="sidebar-link sidebar-depth-{{ $depth }}{{ if $isActive }} is-active{{ end }}" href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ else }}
+        <details class="sidebar-details" {{ if $isActive }}open{{ end }}>
+          <summary class="sidebar-link sidebar-depth-{{ $depth }}{{ if $isActive }} is-active{{ end }}">{{ .Title }}</summary>
+          {{ partial "sidebar-tree.html" (dict "page" $page "node" . "depth" (add $depth 1)) }}
+        </details>
+      {{ end }}
+    {{ end }}
+  </div>
+{{ end }}
