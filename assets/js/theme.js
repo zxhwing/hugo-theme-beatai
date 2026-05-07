@@ -6,7 +6,39 @@ document.addEventListener("DOMContentLoaded", function () {
   var articleImages = document.querySelectorAll(".article-body img");
   var sidebarLinks = document.querySelectorAll(".sidebar a");
   var codeBlocks = document.querySelectorAll(".article-body .highlight");
-  var pagefindRoot = document.getElementById("search");
+  var initSearch = function () {
+    var pagefindRoot = document.getElementById("search");
+    if (!pagefindRoot || !window.PagefindUI || pagefindRoot.dataset.pagefindInitialized === "true") {
+      return;
+    }
+
+    var parseBoolean = function (value, fallback) {
+      if (value === undefined || value === null || value === "") {
+        return fallback;
+      }
+      return value === "true";
+    };
+
+    var pageSize = Number(pagefindRoot.dataset.pagefindPageSize || 8);
+    var excerptLength = Number(pagefindRoot.dataset.pagefindExcerptLength || 20);
+
+    new window.PagefindUI({
+      element: "#search",
+      bundlePath: pagefindRoot.dataset.pagefindBundlePath || "/pagefind/",
+      showSubResults: parseBoolean(pagefindRoot.dataset.pagefindShowSubResults, true),
+      excerptLength: Number.isNaN(excerptLength) ? 20 : excerptLength,
+      pageSize: Number.isNaN(pageSize) ? 8 : pageSize,
+      resetStyles: false,
+      showImages: false,
+      translations: {
+        placeholder: pagefindRoot.dataset.pagefindPlaceholder || "Search..."
+      }
+    });
+
+    pagefindRoot.dataset.pagefindInitialized = "true";
+  };
+
+  window.initBeatAISearch = initSearch;
 
   if (toggle && sidebar) {
     toggle.addEventListener("click", function () {
@@ -115,28 +147,5 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  if (pagefindRoot && window.PagefindUI) {
-    var parseBoolean = function (value, fallback) {
-      if (value === undefined || value === null || value === "") {
-        return fallback;
-      }
-      return value === "true";
-    };
-
-    var pageSize = Number(pagefindRoot.dataset.pagefindPageSize || 8);
-    var excerptLength = Number(pagefindRoot.dataset.pagefindExcerptLength || 20);
-
-    new window.PagefindUI({
-      element: "#search",
-      bundlePath: pagefindRoot.dataset.pagefindBundlePath || "/pagefind/",
-      showSubResults: parseBoolean(pagefindRoot.dataset.pagefindShowSubResults, true),
-      excerptLength: Number.isNaN(excerptLength) ? 20 : excerptLength,
-      pageSize: Number.isNaN(pageSize) ? 8 : pageSize,
-      resetStyles: false,
-      showImages: false,
-      translations: {
-        placeholder: pagefindRoot.dataset.pagefindPlaceholder || "Search..."
-      }
-    });
-  }
+  initSearch();
 });

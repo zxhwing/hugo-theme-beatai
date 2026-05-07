@@ -1,0 +1,34 @@
+{{ $pages := where site.RegularPages "Type" "not in" (slice "search") }}
+<section class="article archive-page">
+  <header class="article-header">
+    <p class="article-kicker">Archive</p>
+    <h1>{{ .Title }}</h1>
+    <p class="article-description">{{ .Params.description | default "Browse all posts and notes in reverse chronological order." }}</p>
+  </header>
+
+  <div class="archive-timeline">
+    {{ range $pages.GroupByDate "2006" }}
+      <section class="archive-year">
+        <div class="archive-year-label">
+          <h2>{{ .Key }}</h2>
+        </div>
+        <div class="archive-list">
+          {{ range .Pages.GroupByDate "January" }}
+            {{ range .Pages }}
+              <a class="archive-item" href="{{ .RelPermalink }}">
+                <span class="archive-dot" aria-hidden="true"></span>
+                <div class="archive-card">
+                  <div class="archive-card-top">
+                    <span class="archive-date">{{ .Date.Format "01-02" }}</span>
+                    <span class="archive-meta">{{ .Section | default "page" }}</span>
+                  </div>
+                  <span class="archive-title">{{ .Title }}</span>
+                </div>
+              </a>
+            {{ end }}
+          {{ end }}
+        </div>
+      </section>
+    {{ end }}
+  </div>
+</section>

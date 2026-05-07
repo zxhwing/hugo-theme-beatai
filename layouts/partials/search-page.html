@@ -50,6 +50,9 @@
     ></div>
     <link href="{{ $bundlePath }}pagefind-ui.css" rel="stylesheet">
     <script src="{{ $bundlePath }}pagefind-ui.js"></script>
+    <script>
+      window.initBeatAISearch && window.initBeatAISearch();
+    </script>
   {{ else }}
     <div class="search-empty-state">
       <p>`Pagefind` search is not enabled. Configure `[params.search]` in your site config and run Pagefind after `hugo` builds the site.</p>
