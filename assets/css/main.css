@@ -403,6 +403,15 @@ pre {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: color-mix(in srgb, var(--panel-strong) 88%, var(--bg) 12%);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+.prose pre code {
+  white-space: inherit;
+  word-break: inherit;
+  overflow-wrap: inherit;
 }
 
 .prose blockquote {
@@ -593,6 +602,17 @@ pre {
 
 .search-result-title {
   font-size: 1.05rem;
+}
+
+.search-result-match {
+  display: inline-flex;
+  width: fit-content;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 600;
 }
 
 .search-result-snippet {

@@ -24,6 +24,24 @@ document.addEventListener("DOMContentLoaded", function () {
       .replace(/"/g, "&quot;")
       .replace(/'/g, "&#39;");
   };
+  var tokenizeQuery = function (query) {
+    return query
+      .toLowerCase()
+      .split(/[\s,.;:!?()\-_/]+/)
+      .map(function (part) {
+        return part.trim();
+      })
+      .filter(Boolean);
+  };
+  var includesToken = function (value, tokens) {
+    if (!value) {
+      return false;
+    }
+    var normalized = String(value).toLowerCase();
+    return tokens.some(function (token) {
+      return normalized.indexOf(token) !== -1;
+    });
+  };
   var initSearch = function () {
     var pagefindRoot = document.getElementById("search");
     if (!pagefindRoot || !window.FlexSearch || pagefindRoot.dataset.searchInitialized === "true") {
@@ -34,7 +52,9 @@ document.addEventListener("DOMContentLoaded", function () {
     var limit = Number(pagefindRoot.dataset.searchLimit || 10);
     var documents = new Map();
     var index = new window.FlexSearch.Document({
-      tokenize: "forward",
+      tokenize: "full",
+      resolution: 9,
+      context: true,
       cache: true,
       document: {
         id: "id",
@@ -61,10 +81,12 @@ document.addEventListener("DOMContentLoaded", function () {
       searchResults.innerHTML = items.map(function (item) {
         var summary = item.summary || "";
         var snippet = summary.length > 180 ? summary.slice(0, 180) + "..." : summary;
+        var matchSource = item.matchSource || "content";
         return [
           '<a class="search-result-card" href="', escapeHtml(item.permalink), '">',
           '<div class="search-result-meta"><span>', escapeHtml(item.section || "page"), '</span><span>', escapeHtml(item.date || ""), "</span></div>",
           '<strong class="search-result-title">', escapeHtml(item.title), "</strong>",
+          '<span class="search-result-match">Matched in ', escapeHtml(matchSource), "</span>",
           '<p class="search-result-snippet">', escapeHtml(snippet), "</p>",
           "</a>"
         ].join("");
@@ -79,22 +101,80 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      var rawResults = index.search(query, { limit: Number.isNaN(limit) ? 10 : limit, enrich: true });
-      var seen = new Set();
-      var flattened = [];
+      var searchLimit = Number.isNaN(limit) ? 10 : limit;
+      var tokens = tokenizeQuery(query);
+      var fieldWeights = {
+        title: 8,
+        tags: 6,
+        summary: 4,
+        section: 3,
+        content: 1
+      };
+      var matchLabels = {
+        title: "title",
+        tags: "tags",
+        summary: "summary",
+        section: "section",
+        content: "content"
+      };
+      var scores = new Map();
 
-      rawResults.forEach(function (group) {
-        group.result.forEach(function (entry) {
-          var doc = entry.doc || documents.get(entry.id);
-          if (!doc || seen.has(doc.id)) {
-            return;
-          }
-          seen.add(doc.id);
-          flattened.push(doc);
+      Object.keys(fieldWeights).forEach(function (field) {
+        var fieldResults = index.search(query, {
+          index: field,
+          limit: searchLimit * 3,
+          enrich: true,
+          suggest: true
+        });
+
+        fieldResults.forEach(function (group) {
+          group.result.forEach(function (entry, position) {
+            var doc = entry.doc || documents.get(entry.id);
+            if (!doc) {
+              return;
+            }
+
+            var existing = scores.get(doc.id) || {
+              doc: doc,
+              score: 0,
+              matchSource: matchLabels[field]
+            };
+
+            var baseScore = fieldWeights[field] * 100;
+            var rankScore = Math.max(0, 40 - position);
+            var tokenBonus = 0;
+
+            if (field === "tags") {
+              tokenBonus = includesToken((doc.tags || []).join(" "), tokens) ? 40 : 0;
+            } else {
+              tokenBonus = includesToken(doc[field], tokens) ? 20 : 0;
+            }
+
+            existing.score += baseScore + rankScore + tokenBonus;
+
+            if (fieldWeights[field] > fieldWeights[existing.matchSource] || existing.matchSource === "content") {
+              existing.matchSource = matchLabels[field];
+            }
+
+            scores.set(doc.id, existing);
+          });
         });
       });
 
-      renderResults(flattened);
+      var ranked = Array.from(scores.values())
+        .sort(function (left, right) {
+          if (right.score !== left.score) {
+            return right.score - left.score;
+          }
+          return String(right.doc.date || "").localeCompare(String(left.doc.date || ""));
+        })
+        .slice(0, searchLimit)
+        .map(function (entry) {
+          entry.doc.matchSource = entry.matchSource;
+          return entry.doc;
+        });
+
+      renderResults(ranked);
     };
 
     fetch(indexUrl)
