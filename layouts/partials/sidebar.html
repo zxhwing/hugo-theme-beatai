@@ -33,9 +33,10 @@
       {{ with site.Menus.main }}
         {{ range . }}
           {{ if ne .URL site.Home.RelPermalink }}
+            {{ $iconName := partial "menu-icon-name.html" . }}
             <a class="sidebar-link{{ if or ($.IsMenuCurrent `main` .) ($.HasMenuCurrent `main` .) }} is-active{{ end }}" href="{{ .URL }}">
-              {{ with .Params.icon }}
-                <span class="sidebar-link-icon">{{ partial "icon.html" . }}</span>
+              {{ if $iconName }}
+                <span class="sidebar-link-icon">{{ partial "icon.html" $iconName }}</span>
               {{ end }}
               <span>{{ .Name }}</span>
             </a>
