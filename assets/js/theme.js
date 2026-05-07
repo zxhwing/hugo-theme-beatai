@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var tocLinks = document.querySelectorAll(".page-toc a");
   var articleImages = document.querySelectorAll(".article-body img");
   var sidebarLinks = document.querySelectorAll(".sidebar a");
-  var codeBlocks = document.querySelectorAll(".article-body pre");
+  var codeBlocks = document.querySelectorAll(".article-body .highlight");
   var pagefindRoot = document.getElementById("search");
 
   if (toggle && sidebar) {
@@ -90,8 +90,12 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   if (codeBlocks.length && document.body.dataset.codeCopy === "true") {
-    codeBlocks.forEach(function (block) {
-      if (block.querySelector(".code-copy-button")) {
+    codeBlocks.forEach(function (container) {
+      if (container.querySelector(".code-copy-button")) {
+        return;
+      }
+      var code = container.querySelector("td:last-child pre code, pre code");
+      if (!code) {
         return;
       }
       var button = document.createElement("button");
@@ -99,8 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
       button.type = "button";
       button.textContent = "Copy";
       button.addEventListener("click", function () {
-        var code = block.querySelector("code");
-        var text = code ? code.innerText : block.innerText;
+        var text = code.innerText;
         navigator.clipboard.writeText(text).then(function () {
           button.textContent = "Copied";
           window.setTimeout(function () {
@@ -108,7 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
           }, 1200);
         });
       });
-      block.appendChild(button);
+      container.appendChild(button);
     });
   }
 

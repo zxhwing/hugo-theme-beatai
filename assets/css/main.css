@@ -151,6 +151,12 @@ pre {
   color: var(--text);
 }
 
+.sidebar-divider {
+  height: 1px;
+  margin: 8px 0 6px;
+  background: var(--line);
+}
+
 .page-shell {
   min-width: 0;
   flex: 1;
@@ -577,7 +583,7 @@ pre {
   cursor: zoom-out;
 }
 
-.article-body pre {
+.article-body .highlight {
   position: relative;
 }
 

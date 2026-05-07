@@ -1,7 +1,23 @@
 {{ $docs := site.GetPage "section" "docs" }}
 {{ $sectionTree := $docs }}
+{{ $showSectionTree := false }}
 {{ if and .IsPage .CurrentSection }}
   {{ $sectionTree = .CurrentSection }}
+{{ end }}
+{{ if eq .Section "docs" }}
+  {{ $showSectionTree = true }}
+{{ end }}
+{{ if .IsSection }}
+  {{ if eq .Section "docs" }}
+    {{ $showSectionTree = true }}
+  {{ end }}
+{{ end }}
+{{ with site.Params.sidebar }}
+  {{ if reflect.IsMap . }}
+    {{ if isset . "contentnav" }}
+      {{ $showSectionTree = index . "contentnav" }}
+    {{ end }}
+  {{ end }}
 {{ end }}
 <aside class="sidebar" data-sidebar>
   <div class="sidebar-inner">
@@ -20,8 +36,11 @@
           {{ end }}
         {{ end }}
       {{ end }}
-      {{ with $sectionTree }}
-        {{ partial "sidebar-tree.html" (dict "page" $.Page "node" . "depth" 0) }}
+      {{ if $showSectionTree }}
+        {{ with $sectionTree }}
+          <div class="sidebar-divider"></div>
+          {{ partial "sidebar-tree.html" (dict "page" $.Page "node" . "depth" 0) }}
+        {{ end }}
       {{ end }}
     </nav>
   </div>
