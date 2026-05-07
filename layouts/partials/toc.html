@@ -1,4 +1,13 @@
-{{ $isArchivePage := or (eq .Type "archives") (eq .Section "archives") }}
+{{ $relPermalink := .RelPermalink | default "" }}
+{{ $title := lower (.Title | default "") }}
+{{ $isArchivePage := or
+  (eq .Type "archives")
+  (eq .Section "archives")
+  (in $relPermalink "/archives/")
+  (eq $title "archives")
+  (eq $title "archive")
+  (eq $title "归档")
+}}
 {{ $showToc := and .IsPage (.Param "ShowToc") (gt (len .TableOfContents) 0) }}
 <aside class="page-toc{{ if and (not $showToc) (not $isArchivePage) }} is-empty{{ end }}">
   {{ if $isArchivePage }}
