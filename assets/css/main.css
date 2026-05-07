@@ -687,6 +687,16 @@ pre {
     linear-gradient(180deg, color-mix(in srgb, var(--panel-strong) 94%, transparent), color-mix(in srgb, var(--panel-strong) 86%, transparent));
 }
 
+.archive-anchor-nav-side {
+  display: grid;
+  gap: 12px;
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
 .archive-anchor-year {
   display: inline-flex;
   align-items: center;
@@ -707,9 +717,24 @@ pre {
   align-items: center;
 }
 
+.archive-anchor-nav-side .archive-anchor-months {
+  gap: 6px 8px;
+}
+
 .archive-anchor-months a {
   color: var(--muted);
   font-size: 0.88rem;
+}
+
+.archive-anchor-nav-side .archive-anchor-year {
+  min-width: 0;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 8px 10px;
+}
+
+.archive-anchor-nav-side .archive-anchor-months a {
+  padding-left: 4px;
 }
 
 .archive-timeline {

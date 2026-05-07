@@ -21,18 +21,6 @@
     </div>
   </header>
 
-  <nav class="archive-anchor-nav" aria-label="Archive year and month navigation">
-    {{ range $groups }}
-      {{ $year := .Key }}
-      <a class="archive-anchor-year" href="#year-{{ $year }}">{{ $year }}</a>
-      <div class="archive-anchor-months">
-        {{ range .Pages.GroupByDate "2006-01" }}
-          <a href="#month-{{ .Key }}">{{ dateFormat "Jan" (printf "%s-01" .Key) }}</a>
-        {{ end }}
-      </div>
-    {{ end }}
-  </nav>
-
   <div class="archive-timeline">
     {{ range $groups }}
       <section id="year-{{ .Key }}" class="archive-year">

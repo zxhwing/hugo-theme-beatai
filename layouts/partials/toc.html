@@ -1,6 +1,9 @@
+{{ $isArchivePage := or (eq .Type "archives") (eq .Section "archives") }}
 {{ $showToc := and .IsPage (.Param "ShowToc") (gt (len .TableOfContents) 0) }}
-<aside class="page-toc{{ if not $showToc }} is-empty{{ end }}">
-  {{ if $showToc }}
+<aside class="page-toc{{ if and (not $showToc) (not $isArchivePage) }} is-empty{{ end }}">
+  {{ if $isArchivePage }}
+    {{ partial "archive-nav.html" . }}
+  {{ else if $showToc }}
     <details class="page-toc-inner" {{ if .Param "TocOpen" }}open{{ end }}>
       <summary>On This Page</summary>
       {{ .TableOfContents }}

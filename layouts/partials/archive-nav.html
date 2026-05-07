@@ -1,0 +1,18 @@
+{{ $pages := where site.RegularPages "Type" "not in" (slice "search") }}
+{{ $groups := $pages.GroupByDate "2006" }}
+{{ if gt (len $groups) 0 }}
+  <div class="page-toc-inner archive-page-nav">
+    <p>Archive Map</p>
+    <div class="archive-anchor-nav archive-anchor-nav-side">
+      {{ range $groups }}
+        {{ $year := .Key }}
+        <a class="archive-anchor-year" href="#year-{{ $year }}">{{ $year }}</a>
+        <div class="archive-anchor-months">
+          {{ range .Pages.GroupByDate "2006-01" }}
+            <a href="#month-{{ .Key }}">{{ dateFormat "Jan" (printf "%s-01" .Key) }}</a>
+          {{ end }}
+        </div>
+      {{ end }}
+    </div>
+  </div>
+{{ end }}
