@@ -33,6 +33,9 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .filter(Boolean);
   };
+  var isCJKQuery = function (query) {
+    return /[\u3400-\u9fff]/.test(query);
+  };
   var includesToken = function (value, tokens) {
     if (!value) {
       return false;
@@ -41,6 +44,12 @@ document.addEventListener("DOMContentLoaded", function () {
     return tokens.some(function (token) {
       return normalized.indexOf(token) !== -1;
     });
+  };
+  var includesQuery = function (value, query) {
+    if (!value || !query) {
+      return false;
+    }
+    return String(value).toLowerCase().indexOf(query.toLowerCase()) !== -1;
   };
   var initSearch = function () {
     var pagefindRoot = document.getElementById("search");
@@ -103,6 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       var searchLimit = Number.isNaN(limit) ? 10 : limit;
       var tokens = tokenizeQuery(query);
+      var normalizedQuery = query.toLowerCase();
       var fieldWeights = {
         title: 8,
         tags: 6,
@@ -160,6 +170,50 @@ document.addEventListener("DOMContentLoaded", function () {
           });
         });
       });
+
+      if (isCJKQuery(query) || normalizedQuery.length <= 2) {
+        documents.forEach(function (doc) {
+          var manualScore = 0;
+          var matchSource = "";
+
+          if (includesQuery(doc.title, normalizedQuery)) {
+            manualScore += 900;
+            matchSource = "title";
+          }
+          if (includesQuery((doc.tags || []).join(" "), normalizedQuery)) {
+            manualScore += 700;
+            matchSource = matchSource || "tags";
+          }
+          if (includesQuery(doc.summary, normalizedQuery)) {
+            manualScore += 450;
+            matchSource = matchSource || "summary";
+          }
+          if (includesQuery(doc.section, normalizedQuery)) {
+            manualScore += 300;
+            matchSource = matchSource || "section";
+          }
+          if (includesQuery(doc.content, normalizedQuery)) {
+            manualScore += 120;
+            matchSource = matchSource || "content";
+          }
+
+          if (!manualScore) {
+            return;
+          }
+
+          var existing = scores.get(doc.id) || {
+            doc: doc,
+            score: 0,
+            matchSource: matchSource || "content"
+          };
+
+          existing.score += manualScore;
+          if (!existing.matchSource || existing.matchSource === "content") {
+            existing.matchSource = matchSource || existing.matchSource;
+          }
+          scores.set(doc.id, existing);
+        });
+      }
 
       var ranked = Array.from(scores.values())
         .sort(function (left, right) {
