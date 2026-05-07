@@ -1,16 +1,32 @@
 {{ $pages := where site.RegularPages "Type" "not in" (slice "search") }}
+{{ $groups := $pages.GroupByDate "2006" }}
 <section class="article archive-page">
   <header class="article-header">
     <p class="article-kicker">Archive</p>
     <h1>{{ .Title }}</h1>
     <p class="article-description">{{ .Params.description | default "Browse all posts and notes in reverse chronological order." }}</p>
+    <div class="archive-summary">
+      <div class="archive-summary-card">
+        <strong>{{ len $pages }}</strong>
+        <span>Total entries</span>
+      </div>
+      <div class="archive-summary-card">
+        <strong>{{ len $groups }}</strong>
+        <span>Active years</span>
+      </div>
+      <div class="archive-summary-card">
+        <strong>{{ with index $pages 0 }}{{ .Date.Format "2006-01-02" }}{{ else }}-{{ end }}</strong>
+        <span>Latest update</span>
+      </div>
+    </div>
   </header>
 
   <div class="archive-timeline">
-    {{ range $pages.GroupByDate "2006" }}
+    {{ range $groups }}
       <section class="archive-year">
         <div class="archive-year-label">
-          <h2>{{ .Key }}</h2>
+          <span class="archive-year-chip">{{ .Key }}</span>
+          <p>{{ len .Pages }} entries</p>
         </div>
         <div class="archive-list">
           {{ range .Pages.GroupByDate "January" }}
@@ -23,6 +39,11 @@
                     <span class="archive-meta">{{ .Section | default "page" }}</span>
                   </div>
                   <span class="archive-title">{{ .Title }}</span>
+                  {{ with .Params.description }}
+                    <p class="archive-excerpt">{{ . }}</p>
+                  {{ else }}
+                    <p class="archive-excerpt">{{ .Summary | plainify | truncate 140 }}</p>
+                  {{ end }}
                 </div>
               </a>
             {{ end }}
