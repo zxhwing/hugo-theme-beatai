@@ -1,31 +1,31 @@
-{{ $item := . }}
-{{ $icon := "" }}
+{{- $item := . -}}
+{{- $icon := "" -}}
 
-{{ with $item.Params.icon }}
-  {{ $icon = . }}
-{{ else }}
-  {{ $name := lower ($item.Name | default "") }}
-  {{ $url := lower ($item.URL | default "") }}
+{{- with $item.Params.icon -}}
+  {{- $icon = . -}}
+{{- else -}}
+  {{- $name := lower ($item.Name | default "") -}}
+  {{- $url := lower ($item.URL | default "") -}}
 
-  {{ if or (eq $name "home") (eq $name "首页") (eq $url "/") }}
-    {{ $icon = "home" }}
-  {{ else if or (eq $name "posts") (in $url "/posts") }}
-    {{ $icon = "file-text" }}
-  {{ else if or (eq $name "research") (in $url "/research") }}
-    {{ $icon = "flask" }}
-  {{ else if or (eq $name "reading") (eq $name "readings") (in $url "/reading") }}
-    {{ $icon = "book-open" }}
-  {{ else if or (eq $name "projects") (in $url "/projects") }}
-    {{ $icon = "folder" }}
-  {{ else if or (eq $name "tags") (in $url "/tags") }}
-    {{ $icon = "tag" }}
-  {{ else if or (eq $name "search") (in $url "/search") }}
-    {{ $icon = "search" }}
-  {{ else if or (eq $name "archives") (in $url "/archives") }}
-    {{ $icon = "archive" }}
-  {{ else if or (eq $name "about") (in $url "/about") }}
-    {{ $icon = "user" }}
-  {{ end }}
-{{ end }}
+  {{- if or (eq $name "home") (eq $name "首页") (eq $url "/") -}}
+    {{- $icon = "home" -}}
+  {{- else if or (eq $name "posts") (in $url "/posts") -}}
+    {{- $icon = "file-text" -}}
+  {{- else if or (eq $name "research") (in $url "/research") -}}
+    {{- $icon = "flask" -}}
+  {{- else if or (eq $name "reading") (eq $name "readings") (in $url "/reading") -}}
+    {{- $icon = "book-open" -}}
+  {{- else if or (eq $name "projects") (in $url "/projects") -}}
+    {{- $icon = "folder" -}}
+  {{- else if or (eq $name "tags") (in $url "/tags") -}}
+    {{- $icon = "tag" -}}
+  {{- else if or (eq $name "search") (in $url "/search") -}}
+    {{- $icon = "search" -}}
+  {{- else if or (eq $name "archives") (in $url "/archives") -}}
+    {{- $icon = "archive" -}}
+  {{- else if or (eq $name "about") (in $url "/about") -}}
+    {{- $icon = "user" -}}
+  {{- end -}}
+{{- end -}}
 
-{{ $icon }}
+{{- $icon -}}
