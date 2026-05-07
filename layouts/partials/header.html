@@ -4,6 +4,15 @@
     <span class="brand-mark"></span>
     <span>{{ site.Title }}</span>
   </a>
+  {{ with site.Menus.main }}
+    <nav class="topnav" aria-label="Primary navigation">
+      {{ range . }}
+        <a class="topnav-link{{ if or ($.IsMenuCurrent `main` .) ($.HasMenuCurrent `main` .) }} is-active{{ end }}" href="{{ .URL }}">
+          {{ .Name }}
+        </a>
+      {{ end }}
+    </nav>
+  {{ end }}
   <div class="topbar-actions">
     <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">Theme</button>
     {{ with site.Params.github }}

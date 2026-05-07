@@ -1,0 +1,60 @@
+{{ define "main" }}
+  {{ $search := site.Params.search }}
+  {{ $enabled := false }}
+  {{ $provider := "" }}
+  {{ $placeholder := "Search..." }}
+  {{ $bundlePath := "/pagefind/" }}
+  {{ $showSubResults := true }}
+  {{ $excerptLength := 20 }}
+  {{ $pageSize := 8 }}
+
+  {{ if reflect.IsMap $search }}
+    {{ if isset $search "enable" }}
+      {{ $enabled = index $search "enable" }}
+    {{ end }}
+    {{ if isset $search "provider" }}
+      {{ $provider = lower (index $search "provider") }}
+    {{ end }}
+    {{ if isset $search "placeholder" }}
+      {{ $placeholder = index $search "placeholder" }}
+    {{ end }}
+    {{ if isset $search "bundlepath" }}
+      {{ $bundlePath = index $search "bundlepath" }}
+    {{ end }}
+    {{ if isset $search "showsubresults" }}
+      {{ $showSubResults = index $search "showsubresults" }}
+    {{ end }}
+    {{ if isset $search "excerptlength" }}
+      {{ $excerptLength = index $search "excerptlength" }}
+    {{ end }}
+    {{ if isset $search "pagesize" }}
+      {{ $pageSize = index $search "pagesize" }}
+    {{ end }}
+  {{ end }}
+
+  <section class="article search-page">
+    <header class="article-header">
+      <p class="article-kicker">Search</p>
+      <h1>{{ .Title }}</h1>
+      <p class="article-description">{{ .Params.description | default "Search across the entire site." }}</p>
+    </header>
+
+    {{ if and $enabled (eq $provider "pagefind") }}
+      <div
+        id="search"
+        class="pagefind-shell"
+        data-pagefind-bundle-path="{{ $bundlePath }}"
+        data-pagefind-placeholder="{{ $placeholder }}"
+        data-pagefind-show-sub-results="{{ $showSubResults }}"
+        data-pagefind-excerpt-length="{{ $excerptLength }}"
+        data-pagefind-page-size="{{ $pageSize }}"
+      ></div>
+      <link href="{{ $bundlePath }}pagefind-ui.css" rel="stylesheet">
+      <script src="{{ $bundlePath }}pagefind-ui.js"></script>
+    {{ else }}
+      <div class="search-empty-state">
+        <p>`Pagefind` search is not enabled. Configure `[params.search]` in your site config and run Pagefind after `hugo` builds the site.</p>
+      </div>
+    {{ end }}
+  </section>
+{{ end }}

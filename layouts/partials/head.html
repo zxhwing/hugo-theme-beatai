@@ -14,7 +14,9 @@
     try {
       var storedTheme = localStorage.getItem("beatai-theme");
       var systemDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-      var theme = storedTheme || (systemDark ? "dark" : "light");
+      var defaultTheme = {{ site.Params.defaultTheme | default "auto" | jsonify }};
+      var fallbackTheme = defaultTheme === "dark" ? "dark" : (defaultTheme === "light" ? "light" : (systemDark ? "dark" : "light"));
+      var theme = storedTheme || fallbackTheme;
       document.documentElement.setAttribute("data-theme", theme);
     } catch (error) {
       document.documentElement.setAttribute("data-theme", "light");

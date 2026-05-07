@@ -7,6 +7,26 @@ theme = "hugo-theme-beatai"
   tag = "tags"
   category = "categories"
 
+[[menu.main]]
+  name = "首页"
+  pageRef = "/"
+  weight = 1
+
+[[menu.main]]
+  name = "文档"
+  pageRef = "/docs"
+  weight = 2
+
+[[menu.main]]
+  name = "标签"
+  pageRef = "/tags"
+  weight = 3
+
+[[menu.main]]
+  name = "搜索"
+  pageRef = "/search"
+  weight = 4
+
 [params]
   description = "一个受 BeatAI 启发的 Hugo 文档站"
   tagline = "清晰、克制、适合长时间阅读"
@@ -15,3 +35,35 @@ theme = "hugo-theme-beatai"
   primaryAction = "/docs/getting-started/"
   secondaryAction = "/tags/"
   github = "https://github.com/yourname/yourrepo"
+  ShowReadingTime = true
+  ShowWordCount = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  ShowPostNavLinks = true
+  ShowToc = true
+  TocOpen = true
+
+  [params.math]
+    enable = true
+    engine = "katex"
+
+  [params.search]
+    enable = true
+    provider = "pagefind"
+    placeholder = "Search notes, guides, and docs"
+    bundlePath = "/pagefind/"
+    showSubResults = true
+    excerptLength = 20
+    pageSize = 8
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.extensions.passthrough]
+      enable = true
+
+      [markup.goldmark.extensions.passthrough.delimiters]
+        block = [['$$','$$'], ['\\[','\\]']]
+        inline = [['$','$'], ['\\(','\\)']]
+
+  [markup.goldmark.renderer]
+    unsafe = true

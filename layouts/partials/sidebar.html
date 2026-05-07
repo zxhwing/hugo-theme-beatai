@@ -1,4 +1,8 @@
 {{ $docs := site.GetPage "section" "docs" }}
+{{ $sectionTree := $docs }}
+{{ if and .IsPage .CurrentSection }}
+  {{ $sectionTree = .CurrentSection }}
+{{ end }}
 <aside class="sidebar" data-sidebar>
   <div class="sidebar-inner">
     <a class="sidebar-title" href="{{ site.Home.RelPermalink }}">{{ site.Title }}</a>
@@ -7,7 +11,16 @@
     {{ end }}
     <nav class="sidebar-nav" aria-label="Sidebar navigation">
       <a class="sidebar-link{{ if .IsHome }} is-active{{ end }}" href="{{ site.Home.RelPermalink }}">首页</a>
-      {{ with $docs }}
+      {{ with site.Menus.main }}
+        {{ range . }}
+          {{ if ne .URL site.Home.RelPermalink }}
+            <a class="sidebar-link{{ if or ($.IsMenuCurrent `main` .) ($.HasMenuCurrent `main` .) }} is-active{{ end }}" href="{{ .URL }}">
+              {{ .Name }}
+            </a>
+          {{ end }}
+        {{ end }}
+      {{ end }}
+      {{ with $sectionTree }}
         {{ partial "sidebar-tree.html" (dict "page" $.Page "node" . "depth" 0) }}
       {{ end }}
     </nav>

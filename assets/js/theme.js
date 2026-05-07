@@ -5,6 +5,8 @@ document.addEventListener("DOMContentLoaded", function () {
   var tocLinks = document.querySelectorAll(".page-toc a");
   var articleImages = document.querySelectorAll(".article-body img");
   var sidebarLinks = document.querySelectorAll(".sidebar a");
+  var codeBlocks = document.querySelectorAll(".article-body pre");
+  var pagefindRoot = document.getElementById("search");
 
   if (toggle && sidebar) {
     toggle.addEventListener("click", function () {
@@ -83,6 +85,54 @@ document.addEventListener("DOMContentLoaded", function () {
       if (event.key === "Escape" && !lightbox.hidden) {
         lightbox.hidden = true;
         lightboxImage.removeAttribute("src");
+      }
+    });
+  }
+
+  if (codeBlocks.length && document.body.dataset.codeCopy === "true") {
+    codeBlocks.forEach(function (block) {
+      if (block.querySelector(".code-copy-button")) {
+        return;
+      }
+      var button = document.createElement("button");
+      button.className = "code-copy-button";
+      button.type = "button";
+      button.textContent = "Copy";
+      button.addEventListener("click", function () {
+        var code = block.querySelector("code");
+        var text = code ? code.innerText : block.innerText;
+        navigator.clipboard.writeText(text).then(function () {
+          button.textContent = "Copied";
+          window.setTimeout(function () {
+            button.textContent = "Copy";
+          }, 1200);
+        });
+      });
+      block.appendChild(button);
+    });
+  }
+
+  if (pagefindRoot && window.PagefindUI) {
+    var parseBoolean = function (value, fallback) {
+      if (value === undefined || value === null || value === "") {
+        return fallback;
+      }
+      return value === "true";
+    };
+
+    var pageSize = Number(pagefindRoot.dataset.pagefindPageSize || 8);
+    var excerptLength = Number(pagefindRoot.dataset.pagefindExcerptLength || 20);
+
+    new window.PagefindUI({
+      element: "#search",
+      bundlePath: pagefindRoot.dataset.pagefindBundlePath || "/pagefind/",
+      showSubResults: parseBoolean(pagefindRoot.dataset.pagefindShowSubResults, true),
+      excerptLength: Number.isNaN(excerptLength) ? 20 : excerptLength,
+      pageSize: Number.isNaN(pageSize) ? 8 : pageSize,
+      resetStyles: false,
+      showImages: false,
+      translations: {
+        placeholder: pagefindRoot.dataset.pagefindPlaceholder || "Search..."
       }
     });
   }

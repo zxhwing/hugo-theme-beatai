@@ -1,0 +1,80 @@
+{{ $mathParam := site.Params.math }}
+{{ $mathEnabled := false }}
+{{ $mathEngine := "katex" }}
+
+{{ if reflect.IsMap $mathParam }}
+  {{ if isset $mathParam "enable" }}
+    {{ $mathEnabled = index $mathParam "enable" }}
+  {{ end }}
+  {{ if isset $mathParam "engine" }}
+    {{ $mathEngine = lower (index $mathParam "engine") }}
+  {{ end }}
+{{ else if $mathParam }}
+  {{ $mathEnabled = true }}
+{{ end }}
+
+{{ if isset .Params "math" }}
+  {{ if reflect.IsMap .Params.math }}
+    {{ if isset .Params.math "enable" }}
+      {{ $mathEnabled = index .Params.math "enable" }}
+    {{ end }}
+    {{ if isset .Params.math "engine" }}
+      {{ $mathEngine = lower (index .Params.math "engine") }}
+    {{ end }}
+  {{ else }}
+    {{ $mathEnabled = .Params.math }}
+  {{ end }}
+{{ end }}
+
+{{ if $mathEnabled }}
+  {{ if eq $mathEngine "mathjax" }}
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        options: {
+          skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      };
+    </script>
+    <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  {{ else }}
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.css"
+      integrity="sha384-5TcZemv2l/9On385z///+d7MSYlvIEw9FuZTIdZ14vJLqWphw7e7ZPuOiCHJcFCP"
+      crossorigin="anonymous"
+    >
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/katex.min.js"
+      integrity="sha384-cMkvdD8LoxVzGF/RPUKAcvmm49FQ0oxwDF3BGKtDXcEc+T1b2N+teh/OJfpU0jr6"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      defer
+      src="https://cdn.jsdelivr.net/npm/katex@0.16.22/dist/contrib/auto-render.min.js"
+      integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!window.renderMathInElement) {
+          return;
+        }
+        window.renderMathInElement(document.body, {
+          delimiters: [
+            { left: "$$", right: "$$", display: true },
+            { left: "\\[", right: "\\]", display: true },
+            { left: "$", right: "$", display: false },
+            { left: "\\(", right: "\\)", display: false }
+          ],
+          ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"],
+          throwOnError: false
+        });
+      });
+    </script>
+  {{ end }}
+{{ end }}

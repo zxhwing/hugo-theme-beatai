@@ -1,5 +1,8 @@
 {{ define "main" }}
   <article class="article">
+    {{ if .Param "ShowBreadCrumbs" }}
+      {{ partial "breadcrumbs.html" . }}
+    {{ end }}
     <header class="article-header">
       <p class="article-kicker">{{ .Section | default "Page" }}</p>
       <h1>{{ .Title }}</h1>
@@ -10,8 +13,11 @@
         {{ with .Date }}
           <span>{{ .Format "2006-01-02" }}</span>
         {{ end }}
-        {{ with .ReadingTime }}
-          <span>{{ . }} min read</span>
+        {{ if .Param "ShowReadingTime" }}
+          <span>{{ .ReadingTime }} min read</span>
+        {{ end }}
+        {{ if .Param "ShowWordCount" }}
+          <span>{{ .WordCount }} words</span>
         {{ end }}
         {{ with .Params.tags }}
           <span>{{ delimit . ", " }}</span>
@@ -21,6 +27,8 @@
     <div class="article-body prose">
       {{ .Content }}
     </div>
-    {{ partial "doc-nav.html" . }}
+    {{ if .Param "ShowPostNavLinks" }}
+      {{ partial "doc-nav.html" . }}
+    {{ end }}
   </article>
 {{ end }}

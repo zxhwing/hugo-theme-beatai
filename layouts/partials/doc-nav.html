@@ -1,5 +1,8 @@
-{{ $docs := site.GetPage "section" "docs" }}
-{{ with $docs }}
+{{ $container := .CurrentSection }}
+{{ if not $container }}
+  {{ $container = site.GetPage "section" "docs" }}
+{{ end }}
+{{ with $container }}
   {{ $pages := .RegularPagesRecursive.ByWeight }}
   {{ $current := $.RelPermalink }}
   {{ $scratch := newScratch }}

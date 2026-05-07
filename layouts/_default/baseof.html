@@ -2,8 +2,9 @@
 <html lang="{{ site.LanguageCode | default `zh-cn` }}" data-theme="light">
   <head>
     {{ partial "head.html" . }}
+    {{ partial "math.html" . }}
   </head>
-  <body>
+  <body data-code-copy="{{ if .Param `ShowCodeCopyButtons` }}true{{ else }}false{{ end }}">
     <div class="site-shell">
       {{ partial "sidebar.html" . }}
       <div class="page-shell">

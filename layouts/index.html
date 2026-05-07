@@ -1,20 +1,45 @@
 {{ define "main" }}
-  <section class="hero">
-    <p class="hero-eyebrow">{{ site.Params.heroEyebrow | default "BeatAI-inspired Hugo Theme" }}</p>
-    <h1>{{ site.Title }}</h1>
-    <p class="hero-copy">{{ site.Params.heroCopy | default "为文档、教程和知识库设计的 Hugo 主题，保留清晰阅读体验和轻量工程感。" }}</p>
-    <div class="hero-actions">
-      <a class="button button-primary" href="{{ site.Params.primaryAction | default `/docs/` }}">开始阅读</a>
-      {{ with site.Params.secondaryAction }}
-        <a class="button button-secondary" href="{{ . }}">查看示例</a>
+  {{ $profile := site.Params.profileMode }}
+  {{ if and $profile $profile.enabled }}
+    <section class="hero hero-profile">
+      {{ with $profile.imageUrl }}
+        <img
+          class="profile-avatar"
+          src="{{ . | relURL }}"
+          alt="{{ $profile.title | default site.Title }}"
+          width="{{ $profile.imageWidth | default 120 }}"
+          height="{{ $profile.imageHeight | default 120 }}"
+        >
       {{ end }}
-    </div>
-  </section>
+      <p class="hero-eyebrow">{{ site.Params.heroEyebrow | default "Profile" }}</p>
+      <h1>{{ $profile.title | default site.Title }}</h1>
+      <p class="hero-copy">{{ $profile.subtitle | default (site.Params.heroCopy | default "为文档、教程和知识库设计的 Hugo 主题，保留清晰阅读体验和轻量工程感。") }}</p>
+      {{ with $profile.buttons }}
+        <div class="hero-actions">
+          {{ range . }}
+            <a class="button {{ if eq .name `Email` }}button-secondary{{ else }}button-primary{{ end }}" href="{{ .url }}">{{ .name }}</a>
+          {{ end }}
+        </div>
+      {{ end }}
+    </section>
+  {{ else }}
+    <section class="hero">
+      <p class="hero-eyebrow">{{ site.Params.heroEyebrow | default "BeatAI-inspired Hugo Theme" }}</p>
+      <h1>{{ site.Title }}</h1>
+      <p class="hero-copy">{{ site.Params.heroCopy | default "为文档、教程和知识库设计的 Hugo 主题，保留清晰阅读体验和轻量工程感。" }}</p>
+      <div class="hero-actions">
+        <a class="button button-primary" href="{{ site.Params.primaryAction | default `/docs/` }}">开始阅读</a>
+        {{ with site.Params.secondaryAction }}
+          <a class="button button-secondary" href="{{ . }}">查看示例</a>
+        {{ end }}
+      </div>
+    </section>
+  {{ end }}
 
   <section class="card-grid">
-    {{ range first 6 (where site.RegularPages "Section" "docs") }}
+    {{ range first 6 site.RegularPages }}
       <a class="doc-card" href="{{ .RelPermalink }}">
-        <span class="doc-card-label">Docs</span>
+        <span class="doc-card-label">{{ .Section | default "Page" }}</span>
         <strong>{{ .Title }}</strong>
         <p>{{ .Params.description | default (.Summary | plainify | truncate 120) }}</p>
       </a>

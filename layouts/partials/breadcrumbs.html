@@ -1,0 +1,14 @@
+{{ $ancestors := .Ancestors.Reverse }}
+{{ if gt (len $ancestors) 0 }}
+  <nav class="breadcrumbs" aria-label="Breadcrumb">
+    <a href="{{ site.Home.RelPermalink }}">Home</a>
+    {{ range $ancestors }}
+      {{ if ne .RelPermalink site.Home.RelPermalink }}
+        <span>/</span>
+        <a href="{{ .RelPermalink }}">{{ .Title }}</a>
+      {{ end }}
+    {{ end }}
+    <span>/</span>
+    <span class="is-current">{{ .Title }}</span>
+  </nav>
+{{ end }}
