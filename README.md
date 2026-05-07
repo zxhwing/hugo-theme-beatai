@@ -15,7 +15,7 @@
 - 深浅色模式切换
 - taxonomy 页面骨架和基础 SEO meta
 - 数学公式渲染
-- Pagefind 搜索页
+- FlexSearch 搜索页
 
 没有直接照搬的部分：
 
@@ -66,22 +66,27 @@
 
 ## 搜索
 
-主题内置了 `Pagefind` 搜索页模板，推荐作为默认搜索实现。
+主题内置了 `FlexSearch` 搜索页模板，在 `hugo server` 下即可工作。
 
 站点配置示例：
 
 ```toml
 [params.search]
   enable = true
-  provider = "pagefind"
+  provider = "flexsearch"
   placeholder = "Search notes, guides, and docs"
-  bundlePath = "/pagefind/"
-  showSubResults = true
-  excerptLength = 20
-  pageSize = 8
+  indexURL = "/index.json"
+  limit = 8
 ```
 
-还需要创建一个搜索页入口，例如：
+还需要确保首页输出 JSON：
+
+```toml
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+```
+
+再创建一个搜索页入口，例如：
 
 ```toml
 [[menu.main]]
@@ -95,19 +100,7 @@
 content/search/_index.md
 ```
 
-`Pagefind` 不在 `hugo server` 过程中自动生成索引。标准流程是：
-
-1. 先构建 Hugo 站点
-2. 再运行 Pagefind 为 `public/` 目录生成索引
-
-例如：
-
-```bash
-hugo
-npx -y pagefind --site public
-```
-
-如果你的站点包含中文或日文内容，`Pagefind` 官方建议使用扩展版本；通过 `npx pagefind` 运行时会自动下载扩展包。
+主题会自动请求 `/index.json`，不需要 `Pagefind` 的额外索引步骤，也不需要二次构建服务。
 
 ## 本地使用
 

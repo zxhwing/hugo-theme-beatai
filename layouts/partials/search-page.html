@@ -2,11 +2,8 @@
 {{ $enabled := false }}
 {{ $provider := "" }}
 {{ $placeholder := "Search..." }}
-{{ $bundlePath := "/pagefind/" }}
-{{ $bundlePathURL := $bundlePath | relURL }}
-{{ $showSubResults := true }}
-{{ $excerptLength := 20 }}
-{{ $pageSize := 8 }}
+{{ $indexURL := "/index.json" | relURL }}
+{{ $limit := 10 }}
 
 {{ if reflect.IsMap $search }}
   {{ if isset $search "enable" }}
@@ -18,17 +15,11 @@
   {{ if isset $search "placeholder" }}
     {{ $placeholder = index $search "placeholder" }}
   {{ end }}
-  {{ if isset $search "bundlepath" }}
-    {{ $bundlePath = index $search "bundlepath" }}
+  {{ if isset $search "indexurl" }}
+    {{ $indexURL = index $search "indexurl" | relURL }}
   {{ end }}
-  {{ if isset $search "showsubresults" }}
-    {{ $showSubResults = index $search "showsubresults" }}
-  {{ end }}
-  {{ if isset $search "excerptlength" }}
-    {{ $excerptLength = index $search "excerptlength" }}
-  {{ end }}
-  {{ if isset $search "pagesize" }}
-    {{ $pageSize = index $search "pagesize" }}
+  {{ if isset $search "limit" }}
+    {{ $limit = index $search "limit" }}
   {{ end }}
 {{ end }}
 
@@ -39,26 +30,27 @@
     <p class="article-description">{{ .Params.description | default "Search across the entire site." }}</p>
   </header>
 
-  {{ if and $enabled (eq $provider "pagefind") }}
+  {{ if and $enabled (eq $provider "flexsearch") }}
     <div
       id="search"
-      class="pagefind-shell"
-      data-pagefind-bundle-path="{{ $bundlePathURL }}"
-      data-pagefind-placeholder="{{ $placeholder }}"
-      data-pagefind-show-sub-results="{{ $showSubResults }}"
-      data-pagefind-excerpt-length="{{ $excerptLength }}"
-      data-pagefind-page-size="{{ $pageSize }}"
-    ></div>
-    <div id="search-status" class="search-empty-state search-status" hidden></div>
-    <link href="{{ $bundlePathURL }}pagefind-ui.css" rel="stylesheet">
+      class="search-shell"
+      data-search-placeholder="{{ $placeholder }}"
+      data-search-index-url="{{ $indexURL }}"
+      data-search-limit="{{ $limit }}"
+    >
+      <label class="search-label" for="search-input">Search</label>
+      <input id="search-input" class="search-input" type="search" placeholder="{{ $placeholder }}" autocomplete="off">
+      <div id="search-status" class="search-empty-state search-status">Start typing to search the site.</div>
+      <div id="search-results" class="search-results" hidden></div>
+    </div>
     <script
-      src="{{ $bundlePathURL }}pagefind-ui.js"
+      src="https://cdn.jsdelivr.net/npm/flexsearch@0.8.205/dist/flexsearch.bundle.min.js"
       onload="window.initBeatAISearch && window.initBeatAISearch()"
-      onerror="window.reportBeatAISearchError && window.reportBeatAISearchError('Pagefind UI assets were not found at {{ $bundlePathURL }}. Run `hugo` and then `npx -y pagefind --site public`, and make sure the generated `pagefind/` directory is deployed.')"
+      onerror="window.reportBeatAISearchError && window.reportBeatAISearchError('FlexSearch could not be loaded. Check your network or vendor the library locally.')"
     ></script>
   {{ else }}
     <div class="search-empty-state">
-      <p>`Pagefind` search is not enabled. Configure `[params.search]` in your site config and run Pagefind after `hugo` builds the site.</p>
+      <p>`FlexSearch` search is not enabled. Configure `[params.search]` in your site config.</p>
     </div>
   {{ end }}
 </section>

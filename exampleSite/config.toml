@@ -27,6 +27,9 @@ theme = "hugo-theme-beatai"
   pageRef = "/search"
   weight = 4
 
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
 [params]
   description = "一个受 BeatAI 启发的 Hugo 文档站"
   tagline = "清晰、克制、适合长时间阅读"
@@ -49,12 +52,10 @@ theme = "hugo-theme-beatai"
 
   [params.search]
     enable = true
-    provider = "pagefind"
+    provider = "flexsearch"
     placeholder = "Search notes, guides, and docs"
-    bundlePath = "/pagefind/"
-    showSubResults = true
-    excerptLength = 20
-    pageSize = 8
+    indexURL = "/index.json"
+    limit = 8
 
 [markup]
   [markup.goldmark]

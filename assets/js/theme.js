@@ -7,6 +7,7 @@ document.addEventListener("DOMContentLoaded", function () {
   var sidebarLinks = document.querySelectorAll(".sidebar a");
   var codeBlocks = document.querySelectorAll(".article-body .highlight");
   var searchStatus = document.getElementById("search-status");
+  var searchResults = document.getElementById("search-results");
   var searchWatchTimer = null;
   var setSearchStatus = function (message) {
     if (!searchStatus) {
@@ -15,44 +16,116 @@ document.addEventListener("DOMContentLoaded", function () {
     searchStatus.hidden = false;
     searchStatus.textContent = message;
   };
+  var escapeHtml = function (value) {
+    return String(value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  };
   var initSearch = function () {
     var pagefindRoot = document.getElementById("search");
-    if (!pagefindRoot || !window.PagefindUI || pagefindRoot.dataset.pagefindInitialized === "true") {
+    if (!pagefindRoot || !window.FlexSearch || pagefindRoot.dataset.searchInitialized === "true") {
       return;
     }
-
-    var parseBoolean = function (value, fallback) {
-      if (value === undefined || value === null || value === "") {
-        return fallback;
-      }
-      return value === "true";
-    };
-
-    var pageSize = Number(pagefindRoot.dataset.pagefindPageSize || 8);
-    var excerptLength = Number(pagefindRoot.dataset.pagefindExcerptLength || 20);
-
-    new window.PagefindUI({
-      element: "#search",
-      bundlePath: pagefindRoot.dataset.pagefindBundlePath || "/pagefind/",
-      showSubResults: parseBoolean(pagefindRoot.dataset.pagefindShowSubResults, true),
-      excerptLength: Number.isNaN(excerptLength) ? 20 : excerptLength,
-      pageSize: Number.isNaN(pageSize) ? 8 : pageSize,
-      resetStyles: false,
-      showImages: false,
-      translations: {
-        placeholder: pagefindRoot.dataset.pagefindPlaceholder || "Search..."
+    var input = pagefindRoot.querySelector("#search-input");
+    var indexUrl = pagefindRoot.dataset.searchIndexUrl || "/index.json";
+    var limit = Number(pagefindRoot.dataset.searchLimit || 10);
+    var documents = new Map();
+    var index = new window.FlexSearch.Document({
+      tokenize: "forward",
+      cache: true,
+      document: {
+        id: "id",
+        index: ["title", "summary", "content", "section", "tags"],
+        store: ["title", "permalink", "summary", "section", "date", "tags"]
       }
     });
 
-    pagefindRoot.dataset.pagefindInitialized = "true";
-    if (searchStatus) {
-      searchStatus.hidden = true;
-      searchStatus.textContent = "";
-    }
-    if (searchWatchTimer) {
-      window.clearTimeout(searchWatchTimer);
-      searchWatchTimer = null;
-    }
+    var renderResults = function (items) {
+      if (!searchResults || !searchStatus) {
+        return;
+      }
+
+      if (!items.length) {
+        searchResults.hidden = true;
+        searchResults.innerHTML = "";
+        setSearchStatus("No results found.");
+        return;
+      }
+
+      searchResults.hidden = false;
+      searchStatus.hidden = false;
+      searchStatus.textContent = items.length + " result" + (items.length === 1 ? "" : "s");
+      searchResults.innerHTML = items.map(function (item) {
+        var summary = item.summary || "";
+        var snippet = summary.length > 180 ? summary.slice(0, 180) + "..." : summary;
+        return [
+          '<a class="search-result-card" href="', escapeHtml(item.permalink), '">',
+          '<div class="search-result-meta"><span>', escapeHtml(item.section || "page"), '</span><span>', escapeHtml(item.date || ""), "</span></div>",
+          '<strong class="search-result-title">', escapeHtml(item.title), "</strong>",
+          '<p class="search-result-snippet">', escapeHtml(snippet), "</p>",
+          "</a>"
+        ].join("");
+      }).join("");
+    };
+
+    var performSearch = function (query) {
+      if (!query) {
+        searchResults.hidden = true;
+        searchResults.innerHTML = "";
+        setSearchStatus("Start typing to search the site.");
+        return;
+      }
+
+      var rawResults = index.search(query, { limit: Number.isNaN(limit) ? 10 : limit, enrich: true });
+      var seen = new Set();
+      var flattened = [];
+
+      rawResults.forEach(function (group) {
+        group.result.forEach(function (entry) {
+          var doc = entry.doc || documents.get(entry.id);
+          if (!doc || seen.has(doc.id)) {
+            return;
+          }
+          seen.add(doc.id);
+          flattened.push(doc);
+        });
+      });
+
+      renderResults(flattened);
+    };
+
+    fetch(indexUrl)
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("Search index request failed with " + response.status);
+        }
+        return response.json();
+      })
+      .then(function (items) {
+        items.forEach(function (item) {
+          documents.set(item.id, item);
+          index.add(item);
+        });
+
+        pagefindRoot.dataset.searchInitialized = "true";
+        setSearchStatus("Start typing to search the site.");
+        if (searchWatchTimer) {
+          window.clearTimeout(searchWatchTimer);
+          searchWatchTimer = null;
+        }
+
+        if (input) {
+          input.addEventListener("input", function () {
+            performSearch(input.value.trim());
+          });
+        }
+      })
+      .catch(function (error) {
+        setSearchStatus("Search index could not be loaded from " + indexUrl + ". Ensure your site outputs /index.json. " + error.message);
+      });
   };
 
   window.initBeatAISearch = initSearch;
@@ -170,14 +243,14 @@ document.addEventListener("DOMContentLoaded", function () {
   if (document.getElementById("search")) {
     searchWatchTimer = window.setTimeout(function () {
       var pagefindRoot = document.getElementById("search");
-      if (!pagefindRoot || pagefindRoot.dataset.pagefindInitialized === "true") {
+      if (!pagefindRoot || pagefindRoot.dataset.searchInitialized === "true") {
         return;
       }
-      if (!window.PagefindUI) {
-        setSearchStatus("Pagefind search assets did not load. Rebuild the site with `hugo`, then run `npx -y pagefind --site public`, and confirm the deployed site contains `/pagefind/pagefind-ui.js`.");
+      if (!window.FlexSearch) {
+        setSearchStatus("FlexSearch did not load. Check network access or vendor the library locally.");
         return;
       }
-      setSearchStatus("Pagefind UI loaded, but the search index is not ready. Run `npx -y pagefind --site public` after building Hugo, and deploy the generated `pagefind/` directory with your site.");
+      setSearchStatus("Search index is not ready. Ensure Hugo outputs /index.json and that the file is reachable.");
     }, 1800);
   }
 });
