@@ -21,32 +21,52 @@
     </div>
   </header>
 
+  <nav class="archive-anchor-nav" aria-label="Archive year and month navigation">
+    {{ range $groups }}
+      {{ $year := .Key }}
+      <a class="archive-anchor-year" href="#year-{{ $year }}">{{ $year }}</a>
+      <div class="archive-anchor-months">
+        {{ range .Pages.GroupByDate "2006-01" }}
+          <a href="#month-{{ .Key }}">{{ dateFormat "Jan" (printf "%s-01" .Key) }}</a>
+        {{ end }}
+      </div>
+    {{ end }}
+  </nav>
+
   <div class="archive-timeline">
     {{ range $groups }}
-      <section class="archive-year">
+      <section id="year-{{ .Key }}" class="archive-year">
         <div class="archive-year-label">
           <span class="archive-year-chip">{{ .Key }}</span>
           <p>{{ len .Pages }} entries</p>
         </div>
         <div class="archive-list">
-          {{ range .Pages.GroupByDate "January" }}
-            {{ range .Pages }}
-              <a class="archive-item" href="{{ .RelPermalink }}">
-                <span class="archive-dot" aria-hidden="true"></span>
-                <div class="archive-card">
-                  <div class="archive-card-top">
-                    <span class="archive-date">{{ .Date.Format "01-02" }}</span>
-                    <span class="archive-meta">{{ .Section | default "page" }}</span>
-                  </div>
-                  <span class="archive-title">{{ .Title }}</span>
-                  {{ with .Params.description }}
-                    <p class="archive-excerpt">{{ . }}</p>
-                  {{ else }}
-                    <p class="archive-excerpt">{{ .Summary | plainify | truncate 140 }}</p>
-                  {{ end }}
-                </div>
-              </a>
-            {{ end }}
+          {{ range .Pages.GroupByDate "2006-01" }}
+            <section id="month-{{ .Key }}" class="archive-month-group">
+              <div class="archive-month-heading">
+                <span class="archive-month-name">{{ dateFormat "January" (printf "%s-01" .Key) }}</span>
+                <span class="archive-month-count">{{ len .Pages }} entries</span>
+              </div>
+              <div class="archive-month-items">
+                {{ range .Pages }}
+                  <a class="archive-item" href="{{ .RelPermalink }}">
+                    <span class="archive-dot" aria-hidden="true"></span>
+                    <div class="archive-card">
+                      <div class="archive-card-top">
+                        <span class="archive-date">{{ .Date.Format "01-02" }}</span>
+                        <span class="archive-meta">{{ .Section | default "page" }}</span>
+                      </div>
+                      <span class="archive-title">{{ .Title }}</span>
+                      {{ with .Params.description }}
+                        <p class="archive-excerpt">{{ . }}</p>
+                      {{ else }}
+                        <p class="archive-excerpt">{{ .Summary | plainify | truncate 140 }}</p>
+                      {{ end }}
+                    </div>
+                  </a>
+                {{ end }}
+              </div>
+            </section>
           {{ end }}
         </div>
       </section>

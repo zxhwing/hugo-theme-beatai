@@ -674,6 +674,44 @@ pre {
   letter-spacing: 0.08em;
 }
 
+.archive-anchor-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  align-items: start;
+  margin-top: 28px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--panel-strong) 94%, transparent), color-mix(in srgb, var(--panel-strong) 86%, transparent));
+}
+
+.archive-anchor-year {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 62px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.archive-anchor-months {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.archive-anchor-months a {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
 .archive-timeline {
   display: grid;
   gap: 42px;
@@ -719,7 +757,7 @@ pre {
 .archive-list {
   position: relative;
   display: grid;
-  gap: 18px;
+  gap: 28px;
   padding-left: 34px;
 }
 
@@ -739,6 +777,38 @@ pre {
   grid-template-columns: 22px minmax(0, 1fr);
   gap: 16px;
   align-items: start;
+}
+
+.archive-month-group {
+  display: grid;
+  gap: 14px;
+}
+
+.archive-month-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-left: 2px;
+}
+
+.archive-month-name {
+  color: var(--text);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.archive-month-count {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.archive-month-items {
+  display: grid;
+  gap: 18px;
 }
 
 .archive-dot {
@@ -795,6 +865,15 @@ pre {
 @media (max-width: 720px) {
   .archive-summary {
     grid-template-columns: 1fr;
+  }
+
+  .archive-anchor-nav {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .archive-anchor-months {
+    gap: 10px;
   }
 
   .archive-year {
