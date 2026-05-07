@@ -530,6 +530,10 @@ pre {
   background: color-mix(in srgb, var(--panel-strong) 72%, transparent);
 }
 
+.search-status {
+  white-space: pre-wrap;
+}
+
 .pagefind-ui {
   --pagefind-ui-primary: var(--accent);
   --pagefind-ui-text: var(--text);

@@ -6,6 +6,15 @@ document.addEventListener("DOMContentLoaded", function () {
   var articleImages = document.querySelectorAll(".article-body img");
   var sidebarLinks = document.querySelectorAll(".sidebar a");
   var codeBlocks = document.querySelectorAll(".article-body .highlight");
+  var searchStatus = document.getElementById("search-status");
+  var searchWatchTimer = null;
+  var setSearchStatus = function (message) {
+    if (!searchStatus) {
+      return;
+    }
+    searchStatus.hidden = false;
+    searchStatus.textContent = message;
+  };
   var initSearch = function () {
     var pagefindRoot = document.getElementById("search");
     if (!pagefindRoot || !window.PagefindUI || pagefindRoot.dataset.pagefindInitialized === "true") {
@@ -36,9 +45,18 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     pagefindRoot.dataset.pagefindInitialized = "true";
+    if (searchStatus) {
+      searchStatus.hidden = true;
+      searchStatus.textContent = "";
+    }
+    if (searchWatchTimer) {
+      window.clearTimeout(searchWatchTimer);
+      searchWatchTimer = null;
+    }
   };
 
   window.initBeatAISearch = initSearch;
+  window.reportBeatAISearchError = setSearchStatus;
 
   if (toggle && sidebar) {
     toggle.addEventListener("click", function () {
@@ -148,4 +166,18 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   initSearch();
+
+  if (document.getElementById("search")) {
+    searchWatchTimer = window.setTimeout(function () {
+      var pagefindRoot = document.getElementById("search");
+      if (!pagefindRoot || pagefindRoot.dataset.pagefindInitialized === "true") {
+        return;
+      }
+      if (!window.PagefindUI) {
+        setSearchStatus("Pagefind search assets did not load. Rebuild the site with `hugo`, then run `npx -y pagefind --site public`, and confirm the deployed site contains `/pagefind/pagefind-ui.js`.");
+        return;
+      }
+      setSearchStatus("Pagefind UI loaded, but the search index is not ready. Run `npx -y pagefind --site public` after building Hugo, and deploy the generated `pagefind/` directory with your site.");
+    }, 1800);
+  }
 });

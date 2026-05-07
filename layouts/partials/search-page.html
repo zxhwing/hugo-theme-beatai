@@ -3,6 +3,7 @@
 {{ $provider := "" }}
 {{ $placeholder := "Search..." }}
 {{ $bundlePath := "/pagefind/" }}
+{{ $bundlePathURL := $bundlePath | relURL }}
 {{ $showSubResults := true }}
 {{ $excerptLength := 20 }}
 {{ $pageSize := 8 }}
@@ -42,17 +43,19 @@
     <div
       id="search"
       class="pagefind-shell"
-      data-pagefind-bundle-path="{{ $bundlePath }}"
+      data-pagefind-bundle-path="{{ $bundlePathURL }}"
       data-pagefind-placeholder="{{ $placeholder }}"
       data-pagefind-show-sub-results="{{ $showSubResults }}"
       data-pagefind-excerpt-length="{{ $excerptLength }}"
       data-pagefind-page-size="{{ $pageSize }}"
     ></div>
-    <link href="{{ $bundlePath }}pagefind-ui.css" rel="stylesheet">
-    <script src="{{ $bundlePath }}pagefind-ui.js"></script>
-    <script>
-      window.initBeatAISearch && window.initBeatAISearch();
-    </script>
+    <div id="search-status" class="search-empty-state search-status" hidden></div>
+    <link href="{{ $bundlePathURL }}pagefind-ui.css" rel="stylesheet">
+    <script
+      src="{{ $bundlePathURL }}pagefind-ui.js"
+      onload="window.initBeatAISearch && window.initBeatAISearch()"
+      onerror="window.reportBeatAISearchError && window.reportBeatAISearchError('Pagefind UI assets were not found at {{ $bundlePathURL }}. Run `hugo` and then `npx -y pagefind --site public`, and make sure the generated `pagefind/` directory is deployed.')"
+    ></script>
   {{ else }}
     <div class="search-empty-state">
       <p>`Pagefind` search is not enabled. Configure `[params.search]` in your site config and run Pagefind after `hugo` builds the site.</p>
