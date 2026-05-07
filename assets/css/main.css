@@ -128,12 +128,15 @@ pre {
 }
 
 .sidebar-link {
-  display: block;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   padding: 10px 12px;
   border-left: 2px solid transparent;
   border-radius: 10px;
   color: var(--muted);
   transition: 160ms ease;
+  width: 100%;
 }
 
 .sidebar-depth-1 {
@@ -149,6 +152,25 @@ pre {
   border-left-color: var(--line-strong);
   background: var(--accent-soft);
   color: var(--text);
+}
+
+.sidebar-link-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+}
+
+.sidebar-link-icon svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .sidebar-divider {

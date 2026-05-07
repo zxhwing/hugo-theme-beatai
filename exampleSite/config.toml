@@ -11,21 +11,29 @@ theme = "hugo-theme-beatai"
   name = "首页"
   pageRef = "/"
   weight = 1
+  [menu.main.params]
+    icon = "home"
 
 [[menu.main]]
   name = "文档"
   pageRef = "/docs"
   weight = 2
+  [menu.main.params]
+    icon = "book-open"
 
 [[menu.main]]
   name = "标签"
   pageRef = "/tags"
   weight = 3
+  [menu.main.params]
+    icon = "tag"
 
 [[menu.main]]
   name = "搜索"
   pageRef = "/search"
   weight = 4
+  [menu.main.params]
+    icon = "search"
 
 [outputs]
   home = ["HTML", "RSS", "JSON"]
