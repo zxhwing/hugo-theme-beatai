@@ -1,0 +1,29 @@
+{{- $cfg := site.Params.localEdit -}}
+{{- $enabled := false -}}
+{{- $contentRoot := "" -}}
+{{- $uriScheme := "vscode://file/" -}}
+{{- $label := "Edit in VS Code" -}}
+
+{{- if reflect.IsMap $cfg -}}
+  {{- if isset $cfg "enable" -}}
+    {{- $enabled = index $cfg "enable" -}}
+  {{- end -}}
+  {{- if isset $cfg "contentroot" -}}
+    {{- $contentRoot = index $cfg "contentroot" -}}
+  {{- end -}}
+  {{- if isset $cfg "urischeme" -}}
+    {{- $uriScheme = index $cfg "urischeme" -}}
+  {{- end -}}
+  {{- if isset $cfg "label" -}}
+    {{- $label = index $cfg "label" -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if and hugo.IsServer $enabled .File (ne $contentRoot "") -}}
+  {{- $root := replace $contentRoot "\\" "/" -}}
+  {{- $root = replaceRE "/+$" "" $root -}}
+  {{- $filePath := replace .File.Path "\\" "/" -}}
+  {{- $fullPath := printf "%s/%s" $root $filePath -}}
+  {{- $uriPath := replace $fullPath " " "%20" -}}
+  <a class="local-edit-button" href="{{ printf "%s%s" $uriScheme $uriPath }}">{{ $label }}</a>
+{{- end -}}

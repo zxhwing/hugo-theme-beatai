@@ -9,6 +9,9 @@
       {{ with .Params.description }}
         <p class="article-description">{{ . }}</p>
       {{ end }}
+      <div class="article-actions">
+        {{ partial "local-edit.html" . }}
+      </div>
       <div class="article-meta">
         {{ with .Date }}
           <span>{{ .Format "2006-01-02" }}</span>

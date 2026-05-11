@@ -102,6 +102,27 @@ content/search/_index.md
 
 主题会自动请求 `/index.json`，不需要 `Pagefind` 的额外索引步骤，也不需要二次构建服务。
 
+## 本地编辑按钮
+
+如果你希望在本地运行 `hugo server` 时，页面上出现“编辑”按钮并直接打开对应的 Markdown 文件，可以这样配置：
+
+```toml
+[params.localEdit]
+  enable = true
+  contentRoot = "D:/zxhwing.github.io/content"
+  uriScheme = "vscode://file/"
+  label = "Edit in VS Code"
+```
+
+说明：
+
+- 这个按钮只会在 `hugo server` 下显示
+- 默认面向 `VS Code`，因为它支持 `vscode://file/...`
+- `contentRoot` 必须指向你本地项目的 `content/` 目录
+- 主题会自动把当前页面的 Markdown 相对路径拼到这个目录后面
+
+如果你不用 VS Code，也可以把 `uriScheme` 换成你本机注册过的编辑器协议。
+
 ## 本地使用
 
 把这个目录放进你的 Hugo 项目的 `themes/hugo-theme-beatai`，然后在站点配置中启用：
