@@ -446,6 +446,58 @@ pre {
   color: color-mix(in srgb, var(--text) 88%, var(--bg) 12%);
 }
 
+.prose table {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 1.6rem 0;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow-x: auto;
+  background: color-mix(in srgb, var(--panel-strong) 92%, transparent);
+  box-shadow: 0 12px 30px rgba(31, 66, 102, 0.06);
+}
+
+.prose thead th {
+  position: sticky;
+  top: 0;
+  background: color-mix(in srgb, var(--accent-soft) 70%, var(--panel-strong) 30%);
+  color: var(--text);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.prose th,
+.prose td {
+  min-width: 120px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+  white-space: normal;
+  line-height: 1.6;
+}
+
+.prose th + th,
+.prose td + td {
+  border-left: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+}
+
+.prose tbody tr:nth-child(even) td {
+  background: color-mix(in srgb, var(--panel-strong) 72%, var(--bg) 28%);
+}
+
+.prose tbody tr:hover td {
+  background: color-mix(in srgb, var(--accent-soft) 42%, var(--panel-strong) 58%);
+}
+
+.prose tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .prose pre {
   overflow: auto;
   padding: 16px;
