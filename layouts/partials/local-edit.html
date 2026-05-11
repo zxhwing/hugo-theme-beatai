@@ -25,5 +25,6 @@
   {{- $filePath := replace .File.Path "\\" "/" -}}
   {{- $fullPath := printf "%s/%s" $root $filePath -}}
   {{- $uriPath := replace $fullPath " " "%20" -}}
-  <a class="local-edit-button" href="{{ printf "%s%s" $uriScheme $uriPath }}">{{ $label }}</a>
+  {{- $href := printf "%s%s" $uriScheme $uriPath -}}
+  <a class="local-edit-button" href="{{ $href | safeURL }}">{{ $label }}</a>
 {{- end -}}
